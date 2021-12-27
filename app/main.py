@@ -33,6 +33,7 @@ class Post(BaseModel):
 @app.get("/sqlalchemy")
 def test_db(db: Session = Depends(get_db)):
   posts = db.query(models.Post).all()
+
   return {"data": posts}
 
 # Get Posts
@@ -52,9 +53,12 @@ def get_posts(db: Session = Depends(get_db)):
 
 # Get Single Post
 @app.get("/posts/{id}")
-def get_post(id: int):
+def get_post(id: int, db: Session = Depends(get_db)):
   # cursor.execute("""SELECT * FROM posts WHERE id = %s """, (str(id)))
   # post = cursor.fetchone()
+
+  post = db.query(models.Post).filter(models.Post.id == id).first()
+
   if not post:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post {id} not found")
   return {"post": post}
@@ -67,13 +71,14 @@ def new_post(post: Post, db: Session = Depends(get_db)):
   # new_post = cursor.fetchone()
   # conn.commit()
 
-  print(post)
+  print(1, post)
+  print(2, post.dict())
+
   new_post = models.Post(**post.dict())
   db.add(new_post)
   db.commit()
   db.refresh(new_post)
   
-  print(new_post)
   return {"data": new_post}
 
 # Update Post
