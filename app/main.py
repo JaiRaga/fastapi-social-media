@@ -12,17 +12,6 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# while True:
-#   try:
-#     conn = psycopg2.connect(host="localhost", database="fastapi", user="postgres", password="HK2556BM941", cursor_factory=RealDictCursor)
-#     cursor = conn.cursor()
-#     print('Database Connection was Successful')
-#     break
-#   except Exception as error:
-#     print('Database Connectio Failed')
-#     print('Error: ', error)
-#     time.sleep(2)
-
 # Get Posts
 @app.get("/posts")
 def get_posts(db: Session = Depends(get_db)):
@@ -30,13 +19,6 @@ def get_posts(db: Session = Depends(get_db)):
   # posts = cursor.fetchall()
   posts = db.query(models.Post).all()
   return {"data": posts}
-
-# get Latest Post
-# @app.get("/posts/latest")
-# def get_latest_posts():
-#   posts = findLatest()
-#   return {"posts": posts}
-
 
 # Get Single Post
 @app.get("/posts/{id}")
